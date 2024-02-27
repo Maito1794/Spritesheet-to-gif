@@ -15,6 +15,7 @@ function App() {
   const [rectangleWidth, setRectangleWidth] = useState(0);
   const [rectangleHeight, setRectangleHeight] = useState(0);
   const [imgName, setImgName] = useState('');
+  const [bgColor, setBgColor] = useState('#ffffff');
   const fileRef = useRef(null);
   const imageRef = useRef(null);
 
@@ -27,15 +28,26 @@ function App() {
   const handleGenerateGif = async () => {
     try {
       if (!spriteSheet) {
-        throw new Error("No sprite sheet provided");
+        setShowAlert(true);
+        setAlertMessage("No sprite sheet provided");
+        return;
       }
       if (!frameWidth || !frameHeight) {
-        throw new Error("Frame width and height are required");
+        setShowAlert(true);
+        setAlertMessage("Frame width and height are required");
+        return;
       }
       if (!delay) {
-        throw new Error("Delay is required");
+        setShowAlert(true);
+        setAlertMessage("Delay is required");
+        return;
       }
-      const gifBlob = await generateGif(spriteSheet, frameWidth, frameHeight, delay);
+      if (!/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(bgColor)) {
+        setShowAlert(true);
+        setAlertMessage("Invalid hex color");
+        return;
+      }
+      const gifBlob = await generateGif(spriteSheet, frameWidth, frameHeight, delay, bgColor);
       setGif(URL.createObjectURL(gifBlob));
 
     } catch (error) {
@@ -48,7 +60,10 @@ function App() {
   useEffect(() => {
     setAlertMessage('no error message');
     setShowAlert(false);
-  }, [spriteSheet, frameWidth, frameHeight, delay]);
+    if (bgColor === '') {
+      setBgColor('#ffffff');
+    }
+  }, [spriteSheet, frameWidth, frameHeight, delay, bgColor]);
 
   useEffect(() => {
     const handleImageUpload = () => {
@@ -115,7 +130,7 @@ function App() {
         <Row>
           <div className="col-md-12 col-sm-12">
             <Row>
-              <div className="col-md-4 col-sm-12 mb-3">
+              <div className="col-md-3 col-sm-12 mb-3">
                 <label htmlFor="spritesheet" className="form-label">Sprite Sheet (.png, .jpg, .jpeg)</label>
                 <div className="input-group">
                   <input ref={fileRef} className="form-control" type="file" id="spritesheet" accept="image/png, image/jpg, image/jpeg" onChange={(e) => { handleFileUpload(e) }} />
@@ -139,8 +154,11 @@ function App() {
                 </div>
                 <input className="form-control" type="number" id="delay" value={delay} onChange={(e) => { setDelay(e.target.value) }} />
               </div>
-
-              <div className="col-md-2 col-sm-12 mb-3 align-self-end">
+              <div className="col-md-2 col-sm-12 mb-3">
+                <label htmlFor="bgColor" className="form-label">Hex background color</label>
+                <input className="form-control" type="text" id="bgColor" value={bgColor} onChange={(e) => { setBgColor(e.target.value) }} />
+              </div>
+              <div className="col-md-1 col-sm-12 mb-3 align-self-end">
                 <button type="button" className='btn btn-primary' onClick={async () => await handleGenerateGif()}>
                   Generate
                 </button>
