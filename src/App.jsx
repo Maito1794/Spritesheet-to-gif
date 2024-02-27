@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from 'react'
-import { Container, Row, Col, Alert } from 'reactstrap';
-import './App.css'
+import { Container, Row, Alert } from 'reactstrap';
 import { generateGif } from './utils/GifGenerator';
+import Tooltip from './components/Tooltip';
+import './App.css'
 
 function App() {
   const [spriteSheet, setSpriteSheet] = useState('');
@@ -16,6 +17,12 @@ function App() {
   const [imgName, setImgName] = useState('');
   const fileRef = useRef(null);
   const imageRef = useRef(null);
+
+  const tooltipData = {
+    placement: "right",
+    data: `2 fps = 500ms\n3 fps = 333ms\n4 fps = 250ms\n5 fps = 200ms\n6 fps = 167ms
+    8 fps = 125ms\n10 fps = 100ms\n12 fps = 83ms\n14 fps = 71ms\n16 fps = 62ms\n20 fps = 50ms\n24 fps = 42ms`
+  }
 
   const handleGenerateGif = async () => {
     try {
@@ -62,8 +69,10 @@ function App() {
     }
 
     return () => {
-      if (spriteSheet) {
+      if (imageRef.current) {
         imageRef.current.removeEventListener('load', handleImageUpload);
+      }
+      if (spriteSheet) {
         window.removeEventListener('resize', handleWindowResize);
       }
     };
@@ -124,9 +133,13 @@ function App() {
                 <input className="form-control" type="number" id="width" value={frameWidth} onChange={(e) => { setFrameWidth(e.target.value) }} />
               </div>
               <div className="col-md-2 col-sm-12 mb-3">
-                <label htmlFor="delay" className="form-label">Delay (ms)</label>
+                <div className="d-flex align-items-center">
+                  <label htmlFor="delay" className="form-label mr-2">Delay (ms)</label>
+                  <Tooltip placement={tooltipData.placement} data={tooltipData.data} />
+                </div>
                 <input className="form-control" type="number" id="delay" value={delay} onChange={(e) => { setDelay(e.target.value) }} />
               </div>
+
               <div className="col-md-2 col-sm-12 mb-3 align-self-end">
                 <button type="button" className='btn btn-primary' onClick={async () => await handleGenerateGif()}>
                   Generate
