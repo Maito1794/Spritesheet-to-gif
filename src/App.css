@@ -1,0 +1,29 @@
+#root {
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header{
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+label {
+  font-weight: bold;
+}
+
+.btn-square{
+  border-radius: 0 !important;
+}
+
+.image-container {
+  position: relative;
+}
+
+.image-container img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #000; /* Border around images */
+}
+
