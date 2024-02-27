@@ -41,7 +41,7 @@ npm install
 
 <h2>Demo</h2>
 
-<p>Check out the <a href="https://maito1794.github.io/sprite-sheet-to-gif">live demo</a> to see Sprite Sheet to GIF Converter in action.</p>
+<p>Check out the <a href="https://maito1794.github.io/Spritesheet-to-gif">live demo</a> to see Sprite Sheet to GIF Converter in action.</p>
 
 <h2>License</h2>
 
