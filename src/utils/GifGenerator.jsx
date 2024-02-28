@@ -2,6 +2,7 @@ import { createCanvas, loadImage } from 'canvas';
 import { encode } from 'modern-gif';
 
 export const generateGif = async (spriteSheetUrl, frameWidth, frameHeight, delay, bgColor) => {
+    console.log('bgColor', bgColor)
     return new Promise(async (resolve, reject) => {
         if (!spriteSheetUrl || !frameWidth || !frameHeight || !delay) {
             reject("Invalid input parameters");
@@ -24,16 +25,22 @@ export const generateGif = async (spriteSheetUrl, frameWidth, frameHeight, delay
                 const canvas = createCanvas(frameWidth, frameHeight);
                 const ctx = canvas.getContext('2d');
 
-                ctx.fillStyle = bgColor;
+                if (!bgColor) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.0)';
+                } else {
+                    ctx.fillStyle = bgColor;
+                }
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                 ctx.drawImage(spriteSheet, sourceX, sourceY, frameWidth, frameHeight, 0, 0, canvas.width, canvas.height);
 
                 const frameImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 const frameBuffer = Buffer.from(frameImageData.data.buffer);
+                console.log('frameBuffer ' + x + ' ' + y, frameBuffer)
                 framesArray.push({
                     data: frameBuffer,
-                    delay: delay
+                    delay: delay,
+                    trim: true
                 });
             }
         }
@@ -42,7 +49,8 @@ export const generateGif = async (spriteSheetUrl, frameWidth, frameHeight, delay
             width: frameWidth,
             height: frameHeight,
             frames: framesArray,
-            looped: true
+            looped: true,
+            format: 'blob'
         });
 
         const blob = new Blob([output], { type: 'image/gif' });

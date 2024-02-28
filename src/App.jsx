@@ -42,7 +42,7 @@ function App() {
         setAlertMessage("Delay is required");
         return;
       }
-      if (!/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(bgColor)) {
+      if (!/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(bgColor) && bgColor !== '') {
         setShowAlert(true);
         setAlertMessage("Invalid hex color");
         return;
@@ -60,9 +60,6 @@ function App() {
   useEffect(() => {
     setAlertMessage('no error message');
     setShowAlert(false);
-    if (bgColor === '') {
-      setBgColor('#ffffff');
-    }
   }, [spriteSheet, frameWidth, frameHeight, delay, bgColor]);
 
   useEffect(() => {
@@ -119,6 +116,7 @@ function App() {
   const handleDowloadGif = () => {
     const a = document.createElement('a');
     a.href = gif;
+    a.target = '_blank';
     a.download = `${imgName}.gif`;
     a.click();
   }

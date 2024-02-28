@@ -15,8 +15,7 @@
     "@mui/icons-material": "^5.15.11",
     "bootstrap": "^5.3.3",
     "canvas": "^2.11.2",
-    "gif-encoder-2": "^1.0.5",
-    "modern-gif": "^2.0.2",
+    "modern-gif": "github:Maito1794/modern-gif#c976e7f",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "reactstrap": "^9.2.2"
