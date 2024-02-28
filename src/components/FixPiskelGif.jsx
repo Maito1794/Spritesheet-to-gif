@@ -4,7 +4,7 @@ import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import { IconButton } from '@mui/material';
 import { FixGif } from '../utils/FixGif';
-import { loadImage } from 'canvas';
+import Tooltip from './Tooltip';
 
 function FixPiskelGif({ isPiskelFix }) {
     const [gif, setGif] = useState('');
@@ -98,7 +98,10 @@ function FixPiskelGif({ isPiskelFix }) {
                     <div className="col-md-12 col-sm-12">
                         <Row>
                             <div className="col-md-3 col-sm-12 mb-3">
-                                <label htmlFor="gif" className="form-label">GIF</label>
+                                <div className="d-flex align-items-center">
+                                    <label htmlFor="gif" className="form-label">GIF</label>
+                                    <Tooltip placement={"right"} data={"The code for fixing the GIFs is courtesy of Myndzi"} type={"info"} />
+                                </div>
                                 <div className="input-group">
                                     <input ref={fileRef} className="form-control" type="file" id="gif" accept="image/gif" onChange={(e) => { handleFileUpload(e) }} />
                                     <div className="input-group-append">

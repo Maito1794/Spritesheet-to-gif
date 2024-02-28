@@ -6,7 +6,6 @@ import './App.css'
 function App() {
   const [isPiskel, setIsPiskel] = useState(false)
   const isPiskelFix = (bool) => {
-    console.log('isPiskelFix', bool)
     setIsPiskel(bool)
   }
 
