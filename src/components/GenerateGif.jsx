@@ -18,7 +18,7 @@ function GenerateGifPage({ isPiskelFix }) {
     const [rectangleHeight, setRectangleHeight] = useState(0);
     const [imgName, setImgName] = useState('');
     const [bgColor, setBgColor] = useState('#ccc');
-    const [theme, setTheme] = useState('dark-theme');
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark-theme');
     const fileRef = useRef(null);
     const imageRef = useRef(null);
     const htmlBody = document.querySelector('body');
@@ -53,6 +53,8 @@ function GenerateGifPage({ isPiskelFix }) {
             }
             const gifBlob = await generateGif(spriteSheet, frameWidth, frameHeight, delay, bgColor);
             setGif(URL.createObjectURL(gifBlob));
+            console.log('Generated gif:', gifBlob);
+            console.log('Generated gif url:', URL.createObjectURL(gifBlob));
 
         } catch (error) {
             setShowAlert(true);
@@ -138,13 +140,18 @@ function GenerateGifPage({ isPiskelFix }) {
     const handlePageChange = () => {
         isPiskelFix(true);
     }
+
+    const handleThemeChange = () => {
+        localStorage.setItem('theme', theme === 'dark-theme' ? 'light-theme' : 'dark-theme');
+        theme === 'dark-theme' ? setTheme('light-theme') : setTheme('dark-theme');
+    }
     return (
         <>
             <Container fluid>
                 <Row>
                     <div className="col-md-12 col-sm-12 header d-flex align-items-center justify-content-center gap-2">
                         <h1>Sprite Sheet to GIF</h1>
-                        <IconButton className='justify-selc-center' onClick={() => { theme === 'dark-theme' ? setTheme('light-theme') : setTheme('dark-theme') }}>
+                        <IconButton className='justify-selc-center' onClick={handleThemeChange}>
                             {theme === 'dark-theme' ? <LightModeOutlinedIcon htmlColor='#fff' /> : <DarkModeOutlinedIcon />}
                         </IconButton>
                     </div>

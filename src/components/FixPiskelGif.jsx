@@ -12,7 +12,7 @@ function FixPiskelGif({ isPiskelFix }) {
     const [alertMessage, setAlertMessage] = useState('no error message');
     const [fixedGif, setFixedGif] = useState(null);
     const [gifName, setGifName] = useState('');
-    const [theme, setTheme] = useState('dark-theme');
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark-theme');
     const fileRef = useRef(null);
     const imageRef = useRef(null);
     const htmlBody = document.querySelector('body');
@@ -83,13 +83,19 @@ function FixPiskelGif({ isPiskelFix }) {
         isPiskelFix(false);
     }
 
+    const handleThemeChange = () => {
+        console.log('theme change');
+        localStorage.setItem('theme', theme === 'dark-theme' ? 'light-theme' : 'dark-theme');
+        theme === 'dark-theme' ? setTheme('light-theme') : setTheme('dark-theme');
+    }
+
     return (
         <>
             <Container fluid>
                 <Row>
                     <div className="col-md-12 col-sm-12 header d-flex align-items-center justify-content-center gap-2">
                         <h1>Fix Piskel GIF</h1>
-                        <IconButton className='justify-selc-center' onClick={() => { theme === 'dark-theme' ? setTheme('light-theme') : setTheme('dark-theme') }}>
+                        <IconButton className='justify-selc-center' onClick={handleThemeChange}>
                             {theme === 'dark-theme' ? <LightModeOutlinedIcon htmlColor='#fff' /> : <DarkModeOutlinedIcon />}
                         </IconButton>
                     </div>
