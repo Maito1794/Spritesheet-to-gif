@@ -4,8 +4,9 @@ import FixPiskelGif from './components/FixPiskelGif'
 import './App.css'
 
 function App() {
-  const [isPiskel, setIsPiskel] = useState(false)
+  const [isPiskel, setIsPiskel] = useState(sessionStorage.getItem('isPiskel') || false)
   const isPiskelFix = (bool) => {
+    sessionStorage.setItem('isPiskel', bool)
     setIsPiskel(bool)
   }
 
