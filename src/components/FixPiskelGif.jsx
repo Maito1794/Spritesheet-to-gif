@@ -95,7 +95,7 @@ function FixPiskelGif({ isPiskelFix }) {
                 <Row>
                     <div className="col-md-12 col-sm-12 header d-flex align-items-center justify-content-center gap-2">
                         <h1>Fix Piskel GIF</h1>
-                        <IconButton className='justify-selc-center' onClick={handleThemeChange}>
+                        <IconButton onClick={handleThemeChange}>
                             {theme === 'dark-theme' ? <LightModeOutlinedIcon htmlColor='#fff' /> : <DarkModeOutlinedIcon />}
                         </IconButton>
                     </div>
