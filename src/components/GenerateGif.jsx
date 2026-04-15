@@ -3,6 +3,7 @@ import { Container, Row, Alert } from 'reactstrap';
 import Tooltip from './Tooltip';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { IconButton } from '@mui/material';
 import { generateGif, detectSemiTransparency } from '../utils/GifGenerator';
 
@@ -164,7 +165,7 @@ function GenerateGifPage({ isPiskelFix }) {
                 <Row>
                     <div className="col-md-12 col-sm-12 header d-flex align-items-center justify-content-center gap-2">
                         <h1>Sprite Sheet to GIF</h1>
-                        <IconButton className='justify-selc-center' onClick={handleThemeChange}>
+                        <IconButton onClick={handleThemeChange}>
                             {theme === 'dark-theme' ? <LightModeOutlinedIcon htmlColor='#fff' /> : <DarkModeOutlinedIcon />}
                         </IconButton>
                     </div>
@@ -201,32 +202,30 @@ function GenerateGifPage({ isPiskelFix }) {
                                     <label htmlFor="bgColor" className="form-label">Hex background color</label>
                                     <Tooltip placement={"top"} data={"Disabled when transparent background is active"} />
                                 </div>
-                                <input
-                                    className="form-control"
-                                    type="text"
-                                    id="bgColor"
-                                    value={bgColor}
-                                    onChange={handleBgColorChange}
-                                    disabled={transparentBg}
-                                />
-                                <div className="form-check mt-2">
+                                <div className="d-flex align-items-center gap-2">
                                     <input
-                                        className="form-check-input"
-                                        type="checkbox"
-                                        id="transparentBg"
-                                        checked={transparentBg}
-                                        disabled={hasSemiTransparency}
-                                        onChange={(e) => setTransparentBg(e.target.checked)}
+                                        className="form-control"
+                                        type="text"
+                                        id="bgColor"
+                                        value={bgColor}
+                                        onChange={handleBgColorChange}
+                                        disabled={transparentBg}
+                                        style={{ flex: 1 }}
                                     />
-                                    <label className="form-check-label" htmlFor="transparentBg">
-                                        Transparent background
-                                    </label>
+                                    <div className="form-check" style={{ whiteSpace: 'nowrap' }}>
+                                        <input
+                                            className="form-check-input"
+                                            type="checkbox"
+                                            id="transparentBg"
+                                            checked={transparentBg}
+                                            disabled={hasSemiTransparency}
+                                            onChange={(e) => setTransparentBg(e.target.checked)}
+                                        />
+                                        <label className="form-check-label" htmlFor="transparentBg">
+                                            Transparent
+                                        </label>
+                                    </div>
                                 </div>
-                                {hasSemiTransparency && (
-                                    <small className="d-block text-warning mt-1">
-                                        This spritesheet has semi-transparent pixels. A background color is required.
-                                    </small>
-                                )}
                             </div>
                             <div className="col-md-1 col-sm-12 mb-3 align-self-end">
                                 <button type="button" className='btn btn-primary' onClick={async () => await handleGenerateGif()}>
@@ -234,7 +233,17 @@ function GenerateGifPage({ isPiskelFix }) {
                                 </button>
                             </div>
                         </Row>
-                        <button type="button" className="btn btn-link" onClick={() => handlePageChange()}>I already have a Piskel-generated GIF</button>
+                        <div className="d-flex justify-content-between align-items-center">
+                            <button type="button" className="btn btn-link" onClick={() => handlePageChange()}>
+                                I already have a Piskel-generated GIF
+                            </button>
+                            {hasSemiTransparency && (
+                                <div className="text-warning d-flex align-items-center">
+                                    <WarningAmberIcon fontSize="small" className="me-1" />
+                                    <small>This spritesheet has semi-transparent pixels. A background color is required.</small>
+                                </div>
+                            )}
+                        </div>
                         <Alert color="danger" className={!showAlert ? 'invisible' : ''} isOpen={true} toggle={() => setShowAlert(false)}>{alertMessage}</Alert>
                         <Row>
                             {spriteSheet &&
