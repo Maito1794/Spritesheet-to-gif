@@ -4,7 +4,7 @@ import Tooltip from './Tooltip';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import { IconButton } from '@mui/material';
-import { generateGif } from '../utils/GifGenerator';
+import { generateGif, detectSemiTransparency } from '../utils/GifGenerator';
 
 function GenerateGifPage({ isPiskelFix }) {
     const [spriteSheet, setSpriteSheet] = useState('');
@@ -19,6 +19,8 @@ function GenerateGifPage({ isPiskelFix }) {
     const [imgName, setImgName] = useState('');
     const [bgColor, setBgColor] = useState('#ccc');
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark-theme');
+    const [transparentBg, setTransparentBg] = useState(false);
+    const [hasSemiTransparency, setHasSemiTransparency] = useState(false);
     const fileRef = useRef(null);
     const imageRef = useRef(null);
     const htmlBody = document.querySelector('body');
@@ -46,13 +48,16 @@ function GenerateGifPage({ isPiskelFix }) {
                 setAlertMessage("Delay is required");
                 return;
             }
-            if (!/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(bgColor)) {
+            if (!transparentBg && !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(bgColor)) {
                 setShowAlert(true);
                 setAlertMessage("Invalid hex color");
                 return;
             }
-            const gifBlob = await generateGif(spriteSheet, frameWidth, frameHeight, delay, bgColor);
-            setGif(URL.createObjectURL(gifBlob));
+            const gifBlob = await generateGif(
+                spriteSheet, frameWidth, frameHeight, delay,
+                transparentBg ? null : bgColor,
+                transparentBg
+            );            setGif(URL.createObjectURL(gifBlob));
             console.log('Generated gif:', gifBlob);
             console.log('Generated gif url:', URL.createObjectURL(gifBlob));
 
@@ -103,21 +108,29 @@ function GenerateGifPage({ isPiskelFix }) {
         setGif(null);
     }
 
-    const handleFileUpload = (e) => {
+    const handleFileUpload = async (e) => {
         const file = e.target.files[0];
-        const fileName = file.name.split('.')[0];
-        const fileExtension = file.name.split('.')[1];
-        if (fileExtension !== 'png' && fileExtension !== 'jpg' && fileExtension !== 'jpeg') {
+        if (!file) return;
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        if (!['png', 'jpg', 'jpeg'].includes(fileExtension)) {
             setShowAlert(true);
             setAlertMessage("Invalid file type. Please upload a .png, .jpg, or .jpeg file");
             return;
         }
-        if (!file) {
-            return;
+        const url = URL.createObjectURL(file);
+        setImgName(file.name.split('.')[0]);
+        setSpriteSheet(url);
+        setGif(null);
+
+        if (fileExtension === 'png') {
+            const hasSemi = await detectSemiTransparency(url);
+            setHasSemiTransparency(hasSemi);
+            if (hasSemi) setTransparentBg(false);
+        } else {
+            setHasSemiTransparency(false);
+            setTransparentBg(false);
         }
-        setImgName(fileName);
-        setSpriteSheet(URL.createObjectURL(file));
-    }
+    };
 
     const handleDowloadGif = () => {
         const a = document.createElement('a');
@@ -186,9 +199,34 @@ function GenerateGifPage({ isPiskelFix }) {
                             <div className="col-md-2 col-sm-12 mb-3">
                                 <div className="d-flex align-items-center">
                                     <label htmlFor="bgColor" className="form-label">Hex background color</label>
-                                    <Tooltip placement={"top"} data={"Transparent background not yet supported"} />
+                                    <Tooltip placement={"top"} data={"Disabled when transparent background is active"} />
                                 </div>
-                                <input className="form-control" type="text" id="bgColor" value={bgColor} onChange={(e) => { handleBgColorChange(e) }} />
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    id="bgColor"
+                                    value={bgColor}
+                                    onChange={handleBgColorChange}
+                                    disabled={transparentBg}
+                                />
+                                <div className="form-check mt-2">
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        id="transparentBg"
+                                        checked={transparentBg}
+                                        disabled={hasSemiTransparency}
+                                        onChange={(e) => setTransparentBg(e.target.checked)}
+                                    />
+                                    <label className="form-check-label" htmlFor="transparentBg">
+                                        Transparent background
+                                    </label>
+                                </div>
+                                {hasSemiTransparency && (
+                                    <small className="d-block text-warning mt-1">
+                                        This spritesheet has semi-transparent pixels. A background color is required.
+                                    </small>
+                                )}
                             </div>
                             <div className="col-md-1 col-sm-12 mb-3 align-self-end">
                                 <button type="button" className='btn btn-primary' onClick={async () => await handleGenerateGif()}>
